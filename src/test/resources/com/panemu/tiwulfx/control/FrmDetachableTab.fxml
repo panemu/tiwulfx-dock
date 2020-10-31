@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.panemu.tiwulfx.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import com.panemu.tiwulfx.table.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root prefHeight="600" prefWidth="800" spacing="10.0" type="VBox" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox VBox.vgrow="NEVER">
+         <children>
+            <Label text="This is an example of DetachableTab/Pane. Every tab can be detached or dropped to other TabPane with the same scope. It also can be reordered and docked." wrapText="true" />
+         </children>
+      </HBox>
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
+        <items>
+            <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
+              <items>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="Scope 1. It uses custom SceneFactory" />
+                        <SplitPane VBox.vgrow="ALWAYS">
+                           <items>
+                              <DetachableTabPane fx:id="tpnScope1" scope="scope1" />
+                           </items>
+                        </SplitPane>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="Scope 2" />
+                        <SplitPane VBox.vgrow="ALWAYS">
+                           <items>
+                              <DetachableTabPane fx:id="tpnScope2" scope="scope2" />
+                           </items>
+                        </SplitPane>
+                     </children>
+                  </VBox>
+              </items>
+            </SplitPane>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="No Scope. It uses custom DetachableTabPaneFactory to change TabClosingPolicy" />
+                  <SplitPane VBox.vgrow="ALWAYS">
+                     <items>
+                        <DetachableTabPane fx:id="tpnNoScope" />
+                     </items>
+                  </SplitPane>
+               </children>
+            </VBox>
+        </items>
+      </SplitPane>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</fx:root>
