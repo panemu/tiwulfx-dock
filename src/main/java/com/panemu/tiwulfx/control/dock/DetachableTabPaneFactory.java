@@ -1,4 +1,4 @@
-package com.panemu.tiwulfx.control;
+package com.panemu.tiwulfx.control.dock;
 
 /**
  * Factory responsible to Instantiate new DetachableTabPane when a Tab is

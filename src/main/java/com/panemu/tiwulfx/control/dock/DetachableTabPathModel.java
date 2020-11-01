@@ -1,4 +1,4 @@
-package com.panemu.tiwulfx.control;
+package com.panemu.tiwulfx.control.dock;
 
 import javafx.scene.shape.HLineTo;
 import javafx.scene.shape.LineTo;

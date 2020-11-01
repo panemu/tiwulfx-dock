@@ -1,8 +1,8 @@
-package com.panemu.tiwulfx.dock.demo1;
+package com.panemu.tiwulfx.control.dock.demo1;
 
-import com.panemu.tiwulfx.control.DetachableTab;
-import com.panemu.tiwulfx.control.DetachableTabPane;
-import com.panemu.tiwulfx.control.DetachableTabPaneFactory;
+import com.panemu.tiwulfx.control.dock.DetachableTab;
+import com.panemu.tiwulfx.control.dock.DetachableTabPane;
+import com.panemu.tiwulfx.control.dock.DetachableTabPaneFactory;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

@@ -1,4 +1,4 @@
-package com.panemu.tiwulfx.control;
+package com.panemu.tiwulfx.control.dock;
 
 import java.awt.MouseInfo;
 import java.awt.Point;

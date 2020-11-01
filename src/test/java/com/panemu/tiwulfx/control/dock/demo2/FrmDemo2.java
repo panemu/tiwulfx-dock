@@ -1,6 +1,6 @@
-package com.panemu.tiwulfx.dock.demo2;
+package com.panemu.tiwulfx.control.dock.demo2;
 
-import com.panemu.tiwulfx.control.DetachableTabPane;
+import com.panemu.tiwulfx.control.dock.DetachableTabPane;
 import java.util.Set;
 import javafx.geometry.Insets;
 import javafx.scene.Node;

@@ -1,4 +1,4 @@
-package com.panemu.tiwulfx.control;
+package com.panemu.tiwulfx.control.dock;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;

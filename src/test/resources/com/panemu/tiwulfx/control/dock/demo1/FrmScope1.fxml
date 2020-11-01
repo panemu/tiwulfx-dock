@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.panemu.tiwulfx.control.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
-<?import com.panemu.tiwulfx.table.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>

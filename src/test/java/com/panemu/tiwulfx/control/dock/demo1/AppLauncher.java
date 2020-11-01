@@ -1,4 +1,4 @@
-package com.panemu.tiwulfx.dock.demo1;
+package com.panemu.tiwulfx.control.dock.demo1;
 
 /**
  *
