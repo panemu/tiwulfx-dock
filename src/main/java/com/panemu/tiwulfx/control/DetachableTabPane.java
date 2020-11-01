@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -568,13 +569,31 @@ public class DetachableTabPane extends TabPane {
 			if (sibling == null) {
 				return;
 			}
-			List<Tab> lstTab = new ArrayList(sibling.getTabs());
-			sibling.getTabs().clear();
-			tabPaneToRemove.getTabs().setAll(lstTab);
-			tabPaneToRemove = sibling;
+			sibling.setCloseIfEmpty(false);
+			if (siblingProvider != null) {
+				siblingProvider.accept(sibling);
+				sibling.setOnClosedPassSibling(siblingProvider);
+			}
 		}
 		sp.getItems().remove(tabPaneToRemove);
 		simplifySplitPane(sp);
+	}
+	
+	private Consumer<DetachableTabPane> siblingProvider;
+	/**
+	 * The siblingProvider consumer works only if {@link #isCloseIfEmpty()} is true.
+	 * It is called right before removing tabpane. It sends closest sibling as parameter.
+	 * This callback is useful when other class has a variable to this tabpane. When this tabpane
+	 * is removed, the variable should be reassigned with passed sibling.
+	 * <pre>
+	 * //reassign tabPane variable with its closest sibling when the pane is removed from scene due to empty.
+	 * tabPane.setOnClosedPassSibling((sibling) -&#62; tabPane = sibling);
+	 * </pre>
+	 * 
+	 * @param siblingProvider is a callback that sends sibling tabpane when current tabpane is removed due to empty.
+	 */
+	public void setOnClosedPassSibling(Consumer<DetachableTabPane> siblingProvider) {
+		this.siblingProvider = siblingProvider;
 	}
 
 	private DetachableTabPane findSibling(SplitPane sp, DetachableTabPane tabPaneToRemove) {
@@ -647,11 +666,18 @@ public class DetachableTabPane extends TabPane {
 	public Callback<Stage, Window> getStageOwnerFactory() {
 		return stageOwnerFactory;
 	}
-
+	
+	/**
+	 * Remove tabpane if it doesn't have any tabs. Default false. 
+	 */
 	public boolean isCloseIfEmpty() {
 		return closeIfEmpty;
 	}
-
+	
+	/**
+	 * Pass true to close the tabpane if it is empty. Default false.
+	 * @param closeIfEmpty 
+	 */
 	public void setCloseIfEmpty(boolean closeIfEmpty) {
 		this.closeIfEmpty = closeIfEmpty;
 	}

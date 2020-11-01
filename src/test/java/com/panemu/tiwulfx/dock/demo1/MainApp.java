@@ -1,4 +1,4 @@
-package com.panemu.tiwulfx.control;
+package com.panemu.tiwulfx.dock.demo1;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -1,4 +1,4 @@
-package com.panemu.tiwulfx.control;
+package com.panemu.tiwulfx.dock.demo1;
 
 import java.io.IOException;
 import java.util.Set;

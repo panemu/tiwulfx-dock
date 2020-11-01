@@ -1,4 +1,4 @@
-package com.panemu.tiwulfx.control;
+package com.panemu.tiwulfx.dock.demo1;
 
 import com.panemu.tiwulfx.control.DetachableTab;
 import com.panemu.tiwulfx.control.DetachableTabPane;
