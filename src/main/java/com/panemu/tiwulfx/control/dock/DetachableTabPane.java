@@ -11,7 +11,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -51,22 +50,20 @@ public class DetachableTabPane extends TabPane {
 
 	/**
 	 * hold reference to the source of drag event. We can't use
-	 * event.getGestureSource() because it is null when the target on a different
-	 * stage
+	 * event.getGestureSource() because it is null when the target is on a different
+	 * stage.
 	 */
 	private static DetachableTabPane DRAG_SOURCE;
 	private static Tab DRAGGED_TAB;
 	private StringProperty scope = new SimpleStringProperty("");
 	private static final Path path = new Path();
 	private static final DetachableTabPathModel pathModel = new DetachableTabPathModel(path);
-	private Pos pos = null;
-	private int dropIndex = 0;
-	private static final Logger logger = Logger.getLogger(DetachableTabPane.class.getName());
+	private Pos pos;
+	private int dropIndex;
 	private List<Double> lstTabPoint = new ArrayList<>();
-	private boolean closeIfEmpty = false;
+	private boolean closeIfEmpty;
 
 	public DetachableTabPane() {
-		super();
 		getStyleClass().add("detachable-tab-pane");
 		attachListeners();
 	}
@@ -159,85 +156,82 @@ public class DetachableTabPane extends TabPane {
 		});
 
 		this.addEventHandler(DragEvent.ANY, (DragEvent event) -> {
-			try {
-				if (DRAG_SOURCE == null) {
+			if (DRAG_SOURCE == null) {
+				return;
+			}
+			if (event.getEventType() == DragEvent.DRAG_OVER) {
+				if (DetachableTabPane.this.scope.get().equals(DRAG_SOURCE.getScope())) {
+					event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+					repaintPath(event, 1);
+				}
+				event.consume();
+			} else if (event.getEventType() == DragEvent.DRAG_EXITED) {
+				if (DetachableTabPane.this.getSkin() instanceof TabPaneSkin) {
+					TabPaneSkin sp = (TabPaneSkin) getSkin();
+					sp.getChildren().remove(path);
+					sp.getChildren().remove(dockPosIndicator);
+					DetachableTabPane.this.requestLayout();
+				}
+			} else if (event.getEventType() == DragEvent.DRAG_ENTERED) {
+				if (!DetachableTabPane.this.scope.get().equals(DRAG_SOURCE.getScope())) {
 					return;
 				}
-				if (event.getEventType() == DragEvent.DRAG_OVER) {
-					if (DetachableTabPane.this.scope.get().equals(DRAG_SOURCE.getScope())) {
-						event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-						repaintPath(event, 1);
-					}
-					event.consume();
-				} else if (event.getEventType() == DragEvent.DRAG_EXITED) {
-					if (DetachableTabPane.this.getSkin() instanceof TabPaneSkin) {
-						TabPaneSkin sp = (TabPaneSkin) getSkin();
-						sp.getChildren().remove(path);
-						sp.getChildren().remove(dockPosIndicator);
-						DetachableTabPane.this.requestLayout();
-					}
-				} else if (event.getEventType() == DragEvent.DRAG_ENTERED) {
-					if (!DetachableTabPane.this.scope.get().equals(DRAG_SOURCE.getScope())) {
-						return;
-					}
-					calculateTabPoints();
-					if (dockPosIndicator == null) {
-						initDropButton();
-					}
-					double layoutX = DetachableTabPane.this.getWidth() / 2;
-					double layoutY = DetachableTabPane.this.getHeight() / 2;
-					dockPosIndicator.setLayoutX(layoutX);
-					dockPosIndicator.setLayoutY(layoutY);
-					if (DetachableTabPane.this.getSkin() instanceof TabPaneSkin) {
-						TabPaneSkin sp = (TabPaneSkin) getSkin();
-						if (!sp.getChildren().contains(path)) {
-							if (!getTabs().isEmpty()) {
-								sp.getChildren().add(dockPosIndicator);
-							}
-							repaintPath(event, 2);
-							sp.getChildren().add(path);
-						}
-					}
-				} else if (event.getEventType() == DragEvent.DRAG_DROPPED) {
-					if (pos != null) {
-						adjacent();
-						event.setDropCompleted(true);
-						event.consume();
-						return;
-					}
-					if (DRAG_SOURCE != null && DRAG_SOURCE != DetachableTabPane.this) {
-						final Tab selectedtab = DRAGGED_TAB;
-						DetachableTabPane.this.getTabs().add(dropIndex, selectedtab);
-						Platform.runLater(new Runnable() {
-							@Override
-							public void run() {
-								DetachableTabPane.this.getSelectionModel().select(selectedtab);
-							}
-						});
-						event.setDropCompleted(true);
-					} else {
-						event.setDropCompleted(DRAG_SOURCE == DetachableTabPane.this);
-						final Tab selectedtab = DRAGGED_TAB;
-						int currentSelectionIndex = getTabs().indexOf(selectedtab);
-						if (dropIndex == currentSelectionIndex) {
-							return;
-						}
-						getTabs().add(dropIndex, selectedtab);
-						Platform.runLater(new Runnable() {
-							@Override
-							public void run() {
-								DetachableTabPane.this.getSelectionModel().select(selectedtab);
-							}
-						});
-					}
-					if (event.isDropCompleted()) {
-						event.getDragboard().setContent(null);
-					}
-					event.consume();
+				calculateTabPoints();
+				if (dockPosIndicator == null) {
+					initDropButton();
 				}
-			} catch (Exception ex) {
-				logger.log(Level.SEVERE, null, ex);
+				double layoutX = DetachableTabPane.this.getWidth() / 2;
+				double layoutY = DetachableTabPane.this.getHeight() / 2;
+				dockPosIndicator.setLayoutX(layoutX);
+				dockPosIndicator.setLayoutY(layoutY);
+				if (DetachableTabPane.this.getSkin() instanceof TabPaneSkin) {
+					TabPaneSkin sp = (TabPaneSkin) getSkin();
+					if (!sp.getChildren().contains(path)) {
+						if (!getTabs().isEmpty()) {
+							sp.getChildren().add(dockPosIndicator);
+						}
+						repaintPath(event, 2);
+						sp.getChildren().add(path);
+					}
+				}
+			} else if (event.getEventType() == DragEvent.DRAG_DROPPED) {
+				if (pos != null) {
+					adjacent();
+					event.setDropCompleted(true);
+					event.consume();
+					return;
+				}
+				if (DRAG_SOURCE != null && DRAG_SOURCE != DetachableTabPane.this) {
+					final Tab selectedtab = DRAGGED_TAB;
+					DetachableTabPane.this.getTabs().add(dropIndex, selectedtab);
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							DetachableTabPane.this.getSelectionModel().select(selectedtab);
+						}
+					});
+					event.setDropCompleted(true);
+				} else {
+					event.setDropCompleted(DRAG_SOURCE == DetachableTabPane.this);
+					final Tab selectedtab = DRAGGED_TAB;
+					int currentSelectionIndex = getTabs().indexOf(selectedtab);
+					if (dropIndex == currentSelectionIndex) {
+						return;
+					}
+					getTabs().add(dropIndex, selectedtab);
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							DetachableTabPane.this.getSelectionModel().select(selectedtab);
+						}
+					});
+				}
+				if (event.isDropCompleted()) {
+					event.getDragboard().setContent(null);
+				}
+				event.consume();
 			}
+			
 		});
 
 		getTabs().addListener((ListChangeListener.Change<? extends Tab> change) -> {
@@ -401,9 +395,7 @@ public class DetachableTabPane extends TabPane {
 			return;
 		}
 		Set<Node> tabs = tabheader.lookupAll(".tab");
-		if (tabs.isEmpty() && !getTabs().isEmpty()) {
-			logger.warning("Failed to initiate drag gesture. There are no tabs.");
-		}
+		
 		for (Node node : tabs) {
 			addGesture(this, node);
 		}
@@ -432,7 +424,6 @@ public class DetachableTabPane extends TabPane {
 			Bounds bound = node.getLayoutBounds();
 			lstTabPoint.add(point.getX() + bound.getWidth() - inset.getX());
 		}
-//		logger.log(Level.INFO, "tab points " + Arrays.deepToString(lstTabPoint.toArray()));
 	}
 
 	private void repaintPath(DragEvent event, int source) {
@@ -468,7 +459,6 @@ public class DetachableTabPane extends TabPane {
 					tabpos = lstTabPoint.get(index);
 				}
 			}
-//			logger.info("drop index: " + dropIndex);
 			pathModel.refresh(tabpos, DetachableTabPane.this.getWidth(), DetachableTabPane.this.getHeight());
 		}
 	}
@@ -721,7 +711,6 @@ public class DetachableTabPane extends TabPane {
 		@Override
 		public Window call(Stage p) {
 			if (DetachableTabPane.this.getScene() == null) {
-				logger.warning("unable to get parent stage");
 				return null;
 			}
 			return DetachableTabPane.this.getScene().getWindow();

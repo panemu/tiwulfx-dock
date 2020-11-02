@@ -1,7 +1,5 @@
 package com.panemu.tiwulfx.control.dock.demo1;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.scene.Scene;
@@ -11,7 +9,6 @@ public class MainApp extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		initTiwulFXConfiguration();
 		final FrmDetachableTab frmData = new FrmDetachableTab();
 		Scene scene = new Scene(frmData);
 		stage.setTitle("Form 1");
@@ -22,10 +19,6 @@ public class MainApp extends Application {
 		
 	}
 	
-	private void initTiwulFXConfiguration() {
-		Logger.getLogger("com.panemu.tiwulfx").setLevel(Level.SEVERE);
-	}
-
 	/**
 	 * The main() method is ignored in correctly deployed JavaFX application.
 	 * main() serves only as fallback in case the application can not be launched
