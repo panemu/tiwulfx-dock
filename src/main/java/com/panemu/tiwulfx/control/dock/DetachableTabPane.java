@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -23,7 +22,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -33,10 +31,8 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -56,8 +52,7 @@ public class DetachableTabPane extends TabPane {
 	private static DetachableTabPane DRAG_SOURCE;
 	private static Tab DRAGGED_TAB;
 	private StringProperty scope = new SimpleStringProperty("");
-	private static final Path path = new Path();
-	private static final DetachableTabPathModel pathModel = new DetachableTabPathModel(path);
+	private TabDropHint dropHint = new TabDropHint();
 	private Pos pos;
 	private int dropIndex;
 	private List<Double> lstTabPoint = new ArrayList<>();
@@ -162,13 +157,13 @@ public class DetachableTabPane extends TabPane {
 			if (event.getEventType() == DragEvent.DRAG_OVER) {
 				if (DetachableTabPane.this.scope.get().equals(DRAG_SOURCE.getScope())) {
 					event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-					repaintPath(event, 1);
+					repaintPath(event);
 				}
 				event.consume();
 			} else if (event.getEventType() == DragEvent.DRAG_EXITED) {
 				if (DetachableTabPane.this.getSkin() instanceof TabPaneSkin) {
 					TabPaneSkin sp = (TabPaneSkin) getSkin();
-					sp.getChildren().remove(path);
+					sp.getChildren().remove(dropHint.getPath());
 					sp.getChildren().remove(dockPosIndicator);
 					DetachableTabPane.this.requestLayout();
 				}
@@ -186,12 +181,12 @@ public class DetachableTabPane extends TabPane {
 				dockPosIndicator.setLayoutY(layoutY);
 				if (DetachableTabPane.this.getSkin() instanceof TabPaneSkin) {
 					TabPaneSkin sp = (TabPaneSkin) getSkin();
-					if (!sp.getChildren().contains(path)) {
+					if (!sp.getChildren().contains(dropHint.getPath())) {
 						if (!getTabs().isEmpty()) {
 							sp.getChildren().add(dockPosIndicator);
 						}
-						repaintPath(event, 2);
-						sp.getChildren().add(path);
+						repaintPath(event);
+						sp.getChildren().add(dropHint.getPath());
 					}
 				}
 			} else if (event.getEventType() == DragEvent.DRAG_DROPPED) {
@@ -426,21 +421,21 @@ public class DetachableTabPane extends TabPane {
 		}
 	}
 
-	private void repaintPath(DragEvent event, int source) {
+	private void repaintPath(DragEvent event) {
 		boolean hasTab = !getTabs().isEmpty();
 		if (hasTab && btnLeft.contains(btnLeft.screenToLocal(event.getScreenX(), event.getScreenY()))) {
-			pathModel.refresh(0, 0, DetachableTabPane.this.getWidth() / 2, DetachableTabPane.this.getHeight());
+			dropHint.refresh(0, 0, DetachableTabPane.this.getWidth() / 2, DetachableTabPane.this.getHeight());
 			pos = Pos.CENTER_LEFT;
 		} else if (hasTab && btnRight.contains(btnRight.screenToLocal(event.getScreenX(), event.getScreenY()))) {
 			double pathWidth = DetachableTabPane.this.getWidth() / 2;
-			pathModel.refresh(pathWidth, 0, pathWidth, DetachableTabPane.this.getHeight());
+			dropHint.refresh(pathWidth, 0, pathWidth, DetachableTabPane.this.getHeight());
 			pos = Pos.CENTER_RIGHT;
 		} else if (hasTab && btnTop.contains(btnTop.screenToLocal(event.getScreenX(), event.getScreenY()))) {
-			pathModel.refresh(0, 0, getWidth(), getHeight() / 2);
+			dropHint.refresh(0, 0, getWidth(), getHeight() / 2);
 			pos = Pos.TOP_CENTER;
 		} else if (hasTab && btnBottom.contains(btnBottom.screenToLocal(event.getScreenX(), event.getScreenY()))) {
 			double pathHeight = getHeight() / 2;
-			pathModel.refresh(0, pathHeight, getWidth(), getHeight() - pathHeight);
+			dropHint.refresh(0, pathHeight, getWidth(), getHeight() - pathHeight);
 			pos = Pos.BOTTOM_CENTER;
 		} else {
 			pos = null;
@@ -459,7 +454,7 @@ public class DetachableTabPane extends TabPane {
 					tabpos = lstTabPoint.get(index);
 				}
 			}
-			pathModel.refresh(tabpos, DetachableTabPane.this.getWidth(), DetachableTabPane.this.getHeight());
+			dropHint.refresh(tabpos, DetachableTabPane.this.getWidth(), DetachableTabPane.this.getHeight());
 		}
 	}
 
@@ -755,4 +750,15 @@ public class DetachableTabPane extends TabPane {
 		return DetachableTabPane.class.getResource("tiwulfx-dock.css").toExternalForm();
 	}
 	
+	/**
+	 * Use this method to create custom drop hint by extending {@link TabDropHint} class.
+	 * @param dropHint 
+	 */
+	public void setDropHint(TabDropHint dropHint) {
+		this.dropHint = dropHint;
+	}
+	
+	public TabDropHint getDropHint() {
+		return this.dropHint;
+	}
 }

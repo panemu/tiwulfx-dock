@@ -82,6 +82,7 @@ public class FrmDetachableTab extends VBox {
 			}
 		
 		});
+		tpnNoScope.setDropHint(new CustomDropHint());
 	}
 	
 	private TableView createTabContent() {

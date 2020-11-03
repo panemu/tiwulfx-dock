@@ -16,6 +16,7 @@ public abstract class DetachableTabPaneFactory {
 		tabPane.setTabClosingPolicy(source.getTabClosingPolicy());
 		tabPane.setCloseIfEmpty(true);
 		tabPane.setDetachableTabPaneFactory(source.getDetachableTabPaneFactory());
+		tabPane.setDropHint(source.getDropHint());
 		init(tabPane);
 		return tabPane;
 	}

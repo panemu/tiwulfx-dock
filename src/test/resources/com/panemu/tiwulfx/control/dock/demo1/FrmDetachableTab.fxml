@@ -43,7 +43,7 @@
             </SplitPane>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label text="No Scope. It uses custom DetachableTabPaneFactory to change TabClosingPolicy" />
+                  <Label text="No Scope. It uses custom DetachableTabPaneFactory to change TabClosingPolicy and also custom TabDropHint" />
                   <SplitPane VBox.vgrow="ALWAYS">
                      <items>
                         <DetachableTabPane fx:id="tpnNoScope" />

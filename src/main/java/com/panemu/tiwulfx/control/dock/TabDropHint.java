@@ -1,5 +1,6 @@
 package com.panemu.tiwulfx.control.dock;
 
+import javafx.scene.Node;
 import javafx.scene.shape.HLineTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -7,10 +8,10 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.VLineTo;
 
 /**
- *
+ * Class responsible to draw tab drop hint.
  * @author amrullah
  */
-class DetachableTabPathModel {
+public class TabDropHint {
 
 	private double tabPos;
 	private double width;
@@ -19,8 +20,8 @@ class DetachableTabPathModel {
 	private double startY;
 	private final Path path;
 
-	public DetachableTabPathModel(Path path) {
-		this.path = path;
+	public TabDropHint() {
+		this.path = new Path();
 		this.path.getStyleClass().add("drop-path");
 	}
 	
@@ -36,7 +37,7 @@ class DetachableTabPathModel {
 		this.startX = startX;
 		this.startY = startY;
 		if (regenerate) {
-			generateTabPath(path, startX + 2, startY + 2, width - 4, height - 4);
+			generateAdjacentPath(path, startX + 2, startY + 2, width - 4, height - 4);
 		}
 	}
 	
@@ -50,11 +51,11 @@ class DetachableTabPathModel {
 		startX = 0;
 		startY = 0;
 		if (regenerate) {
-			generateTabPath(path, tabPos, width - 2, height - 2);
+			generateInsertionPath(path, tabPos, width - 2, height - 2);
 		}
 	}
 	
-	private void generateTabPath(Path path, double startX, double startY, double width, double height) {
+	protected void generateAdjacentPath(Path path, double startX, double startY, double width, double height) {
 		path.getElements().clear();
 		MoveTo moveTo = new MoveTo();
 		moveTo.setX(startX);
@@ -66,7 +67,7 @@ class DetachableTabPathModel {
 		path.getElements().add(new VLineTo(startY));//back to start
 	}
 
-	private void generateTabPath(Path path, double tabPos, double width, double height) {
+	protected void generateInsertionPath(Path path, double tabPos, double width, double height) {
 		int tabHeight = 28;
 		int start = 2;
 		tabPos = Math.max(start, tabPos);
@@ -93,5 +94,9 @@ class DetachableTabPathModel {
 			path.getElements().add(new LineTo(tip, tabHeight + 15));
 			path.getElements().add(new VLineTo(tabHeight + 5));
 		}
+	}
+	
+	public Node getPath() {
+		return path;
 	}
 }
