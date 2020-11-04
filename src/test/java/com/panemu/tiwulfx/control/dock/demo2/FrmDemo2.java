@@ -36,9 +36,7 @@ public class FrmDemo2 extends VBox {
 		pnlLeft.setPrefWidth(300);
 		tabPane = new DetachableTabPane();
 		tabPane.setOnClosedPassSibling((sibling) -> tabPane = sibling);
-		tabPane.setStageOwnerFactory((stage) -> {
-			return getScene().getWindow();
-		});
+		tabPane.setStageOwnerFactory((stage) -> getScene().getWindow());
 		SplitPane sp = new SplitPane();
 		HBox.setHgrow(sp, Priority.ALWAYS);
 		sp.getItems().add(tabPane);
