@@ -3,10 +3,9 @@ TiwulFX-Dock provides enhanced JavaFX TabPane that supports tab reordering, deta
 
 ![Demo](media/tiwulfx-dock-demo.gif)
 
-##Usage
+## Usage
 
 Maven dependency:
-
 ```
 <dependency>
    <groupId>com.panemu</groupId>
@@ -16,22 +15,20 @@ Maven dependency:
 ```
 
 Wrap DetachableTabPane inside a SplitPane. Below is an example in FXML file:
-
 ```
 <SplitPane VBox.vgrow="ALWAYS">
 	<items>
-		<DetachableTabPane fx:id="myTabPane" scope="scope1" />
+		<DetachableTabPane fx:id="myTabPane" />
 	</items>
 </SplitPane>
 ```
 
 Then if the java class file has a variable holding reference to the DetachableTabPane, then add this
-
 ```
 myTabPane.setOnClosedPassSibling((sibling) -> myTabPane = sibling);
 ```
 
-##Customization
+## Customization
 
 All of the following customization examples are shown in the demo projects.
 
@@ -60,3 +57,8 @@ myTabPane.setDropHint(new CustomDropHint());
 ```
 
 All these customization examples are shown in the demo projects.
+
+
+## License
+
+MIT
