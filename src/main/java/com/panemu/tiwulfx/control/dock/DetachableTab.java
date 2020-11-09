@@ -9,7 +9,7 @@ import javafx.scene.control.Tab;
  * @author amrullah
  */
 public class DetachableTab extends Tab {
-	private final BooleanProperty detachable = new SimpleBooleanProperty( true);
+	private final BooleanProperty detachable = new SimpleBooleanProperty(true);
 
 	public DetachableTab() {
 	}

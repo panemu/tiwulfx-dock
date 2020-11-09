@@ -41,7 +41,7 @@ public class DetachableTabPane extends TabPane {
 	 */
 	private static DetachableTabPane DRAG_SOURCE;
 	private static Tab DRAGGED_TAB;
-	private final StringProperty scope = new SimpleStringProperty( "");
+	private final StringProperty scope = new SimpleStringProperty("");
 	private TabDropHint dropHint = new TabDropHint();
 	private Pos pos;
 	private int dropIndex;
@@ -119,12 +119,12 @@ public class DetachableTabPane extends TabPane {
 		sceneProperty().addListener((ObservableValue<? extends Scene> ov, Scene t, Scene t1) -> {
 			if (t == null && t1 != null) {
 				if (getScene().getWindow() != null) {
-					Platform.runLater(() -> initiateDragGesture( true) );
+					Platform.runLater(() -> initiateDragGesture(true) );
 				} else {
 					getScene().windowProperty().addListener((ObservableValue<? extends Window> ov1, Window t2, Window t3) -> {
 						if (t2 == null && t3 != null) {
 							t3.addEventHandler(WindowEvent.WINDOW_SHOWN, (t4) ->
-									initiateDragGesture( true) );
+									initiateDragGesture(true) );
 						}
 					});
 				}
@@ -185,7 +185,7 @@ public class DetachableTabPane extends TabPane {
 					);
 					event.setDropCompleted(true);
 				} else {
-					event.setDropCompleted( true );
+					event.setDropCompleted(true);
 					final Tab selectedtab = DRAGGED_TAB;
 					int currentSelectionIndex = getTabs().indexOf(selectedtab);
 					if (dropIndex == currentSelectionIndex) {
@@ -635,7 +635,7 @@ public class DetachableTabPane extends TabPane {
 
 	private static final int STAGE_WIDTH = 400;
 	private Callback<DetachableTabPane, Scene> sceneFactory = p ->
-			new Scene( p, STAGE_WIDTH, STAGE_WIDTH);
+			new Scene(p, STAGE_WIDTH, STAGE_WIDTH);
 
 	private DetachableTabPaneFactory detachableTabPaneFactory = new DetachableTabPaneFactory(){
 		@Override
@@ -677,7 +677,7 @@ public class DetachableTabPane extends TabPane {
 			final DetachableTabPane tabPane = detachableTabPaneFactory.create(
 					DetachableTabPane.this );
 			initOwner(stageOwnerFactory.call(this));
-			Scene scene = sceneFactory.call( tabPane );
+			Scene scene = sceneFactory.call(tabPane);
 
 			scene.getStylesheets().addAll(DetachableTabPane.this.getScene().getStylesheets());
 			setScene(scene);
@@ -694,8 +694,8 @@ public class DetachableTabPane extends TabPane {
 				setY(p.y);
 //			}
 			show();
-			tabPane.getTabs().add( tab);
-			tabPane.getSelectionModel().select( tab);
+			tabPane.getTabs().add(tab);
+			tabPane.getSelectionModel().select(tab);
 			if (tab.getContent() instanceof Parent) {
 				((Parent) tab.getContent()).requestLayout();
 			}
