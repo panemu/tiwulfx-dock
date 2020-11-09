@@ -9,7 +9,7 @@ package com.panemu.tiwulfx.control.dock;
 public abstract class DetachableTabPaneFactory {
 
 	DetachableTabPane create(DetachableTabPane source) {
-		DetachableTabPane tabPane = new DetachableTabPane();
+		final DetachableTabPane tabPane = new DetachableTabPane();
 		tabPane.setSceneFactory(source.getSceneFactory());
 		tabPane.setStageOwnerFactory(source.getStageOwnerFactory());
 		tabPane.setScope(source.getScope());
@@ -24,8 +24,6 @@ public abstract class DetachableTabPaneFactory {
 	/**
 	 * Callback method to initialize newly created DetachableTabPane for the Tab
 	 * that is being detached/docked.
-	 *
-	 * @param newTabPane
 	 */
 	protected abstract void init(DetachableTabPane newTabPane);
 }

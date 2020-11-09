@@ -1,14 +1,11 @@
 package com.panemu.tiwulfx.control.dock;
 
 import javafx.scene.Node;
-import javafx.scene.shape.HLineTo;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.VLineTo;
+import javafx.scene.shape.*;
 
 /**
  * Class responsible to draw tab drop hint.
+ *
  * @author amrullah
  */
 public class TabDropHint {
