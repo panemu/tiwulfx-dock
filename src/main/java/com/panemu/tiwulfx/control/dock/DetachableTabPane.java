@@ -64,13 +64,13 @@ public class DetachableTabPane extends TabPane {
 		btnTop.getStyleClass().addAll("adjacent-drop", "drop-top");
 		btnRight = new StackPane();
 		btnRight.getStyleClass().addAll("adjacent-drop", "drop-right");
-		
+
 		btnLeft = new StackPane();
 		btnLeft.getStyleClass().addAll("adjacent-drop", "drop-left");
-		
+
 		btnBottom = new StackPane();
 		btnBottom.getStyleClass().addAll("adjacent-drop", "drop-bottom");
-		
+
 		StackPane.setAlignment(btnTop, Pos.TOP_CENTER);
 		StackPane.setAlignment(btnRight, Pos.CENTER_RIGHT);
 		StackPane.setAlignment(btnBottom, Pos.BOTTOM_CENTER);
@@ -80,7 +80,7 @@ public class DetachableTabPane extends TabPane {
 		StackPane wrapper = new StackPane();
 		wrapper.getStyleClass().setAll("dock-pos-indicator");
 		wrapper.getChildren().addAll(btnBottom, btnLeft, btnTop, btnRight);
-		
+
 		dockPosIndicator = new StackPane();
 		dockPosIndicator.getChildren().add(wrapper);
 	}
@@ -109,13 +109,25 @@ public class DetachableTabPane extends TabPane {
 		return scope;
 	}
 
-	private void attachListeners() {
+	/**
+	 * Helper method to add a new {@link DetachableTab} to the list of tabs.
+	 *
+	 * @param tabName The tab's name, presented to the user.
+	 * @param content The tab's content, displayed within the tab.
+	 * @return The tab instance that was created.
+	 */
+	public DetachableTab addTab( final String tabName, final Node content ) {
+		final var tab = new DetachableTab( tabName, content );
+		getTabs().add( tab );
+		return tab;
+	}
 
-		/*
-		 * This listener detects when the TabPane is shown. Then it will call
-		 * initiateDragGesture. It because the lookupAll call in that method only
-		 * works if the stage containing this instance is already shown.
-		 */
+	/**
+	 * This listener detects when the TabPane is shown. Then it will call
+	 * initiateDragGesture. It because the lookupAll call in that method only
+	 * works if the stage containing this instance is already shown.
+	 */
+	private void attachListeners() {
 		sceneProperty().addListener((ObservableValue<? extends Scene> ov, Scene t, Scene t1) -> {
 			if (t == null && t1 != null) {
 				if (getScene().getWindow() != null) {
@@ -201,7 +213,7 @@ public class DetachableTabPane extends TabPane {
 				}
 				event.consume();
 			}
-			
+
 		});
 
 		getTabs().addListener((ListChangeListener.Change<? extends Tab> change) -> {
@@ -272,7 +284,7 @@ public class DetachableTabPane extends TabPane {
 			scene.setRoot(wrapper);
 		}
 
-		Parent parent = getParent();
+		final Parent parent = getParent();
 
 		Orientation requestedOrientation = Orientation.HORIZONTAL;
 		if (pos == Pos.BOTTOM_CENTER || pos == Pos.TOP_CENTER) {
@@ -292,7 +304,7 @@ public class DetachableTabPane extends TabPane {
 			targetSplitPane.setOrientation(requestedOrientation);
 
 			if (parent instanceof Pane) {
-				Pane pane = (Pane) parent;
+				final Pane pane = (Pane) parent;
 				int index = pane.getChildren().indexOf(DetachableTabPane.this);
 				pane.getChildren().remove(DetachableTabPane.this);
 				pane.getChildren().add(index, targetSplitPane);
@@ -365,7 +377,7 @@ public class DetachableTabPane extends TabPane {
 			return;
 		}
 		final Set<Node> tabs = tabheader.lookupAll(".tab");
-		
+
 		for (final Node node : tabs) {
 			addGesture(this, node);
 		}
@@ -381,7 +393,7 @@ public class DetachableTabPane extends TabPane {
 		}
 		return tabheader;
 	}
-	
+
 	private void calculateTabPoints() {
 		lstTabPoint.clear();
 		lstTabPoint.add(0d);
@@ -423,7 +435,7 @@ public class DetachableTabPane extends TabPane {
 				}
 			}
 			if (tabpos == -1) {
-				int index = lstTabPoint.size() - 1;
+				final int index = lstTabPoint.size() - 1;
 				dropIndex = getTabs().size();
 				if (index > -1) {
 					tabpos = lstTabPoint.get(index);
@@ -442,6 +454,7 @@ public class DetachableTabPane extends TabPane {
 			node.setOnDragDone(null);
 		}
 	}
+
 	private static final DataFormat DATA_FORMAT = new DataFormat("dragAwareTab");
 
 	private void addGesture(final TabPane tabPane, final Node node) {
@@ -538,18 +551,24 @@ public class DetachableTabPane extends TabPane {
 		sp.getItems().remove(tabPaneToRemove);
 		simplifySplitPane(sp);
 	}
-	
+
 	private Consumer<DetachableTabPane> siblingProvider;
+
 	/**
-	 * The siblingProvider consumer works only if {@link #isCloseIfEmpty()} is true.
-	 * It is called right before removing tabpane. It sends closest sibling as parameter.
-	 * This callback is useful when other class has a variable to this tabpane. When this tabpane
-	 * is removed, the variable should be reassigned with passed sibling.
+	 * The siblingProvider consumer works only if {@link #isCloseIfEmpty()} is
+	 * true. It is called right before removing tabpane. It sends closest sibling
+	 * as parameter. This callback is useful when other class has a variable to
+	 * this tabpane. When this tabpane is removed, the variable should be
+	 * reassigned with passed sibling.
+	 *
+	 * <p>
+	 * The following example code reassigns the tabPane variable with its closest
+	 * sibling when the pane is removed from scene due to empty:
+	 * </p>
 	 * <pre>
-	 * //reassign tabPane variable with its closest sibling when the pane is removed from scene due to empty.
 	 * tabPane.setOnClosedPassSibling((sibling) -&#62; tabPane = sibling);
 	 * </pre>
-	 * 
+	 *
 	 * @param siblingProvider is a callback that sends sibling tabpane when current tabpane is removed due to empty.
 	 */
 	public void setOnClosedPassSibling(Consumer<DetachableTabPane> siblingProvider) {
@@ -618,14 +637,14 @@ public class DetachableTabPane extends TabPane {
 	public Callback<Stage, Window> getStageOwnerFactory() {
 		return stageOwnerFactory;
 	}
-	
+
 	/**
-	 * Remove tabpane if it doesn't have any tabs. Default false. 
+	 * Remove tabpane if it doesn't have any tabs. Default false.
 	 */
 	public boolean isCloseIfEmpty() {
 		return closeIfEmpty;
 	}
-	
+
 	/**
 	 * Pass true to close the tabpane if it is empty. Default false.
 	 */
@@ -634,13 +653,14 @@ public class DetachableTabPane extends TabPane {
 	}
 
 	private static final int STAGE_WIDTH = 400;
+
 	private Callback<DetachableTabPane, Scene> sceneFactory = p ->
 			new Scene(p, STAGE_WIDTH, STAGE_WIDTH);
 
 	private DetachableTabPaneFactory detachableTabPaneFactory = new DetachableTabPaneFactory(){
 		@Override
 		protected void init(DetachableTabPane a) {}
-		
+
 	};
 
 	public DetachableTabPaneFactory getDetachableTabPaneFactory() {
@@ -660,15 +680,11 @@ public class DetachableTabPane extends TabPane {
 		this.detachableTabPaneFactory = detachableTabPaneFactory;
 	}
 
-	private Callback<Stage, Window> stageOwnerFactory = new Callback<Stage, Window>() {
-
-		@Override
-		public Window call(Stage p) {
-			if (DetachableTabPane.this.getScene() == null) {
-				return null;
-			}
-			return DetachableTabPane.this.getScene().getWindow();
+	private Callback<Stage, Window> stageOwnerFactory = p -> {
+		if (DetachableTabPane.this.getScene() == null) {
+			return null;
 		}
+		return DetachableTabPane.this.getScene().getWindow();
 	};
 
 	private class TabStage extends Stage {
@@ -682,17 +698,9 @@ public class DetachableTabPane extends TabPane {
 			scene.getStylesheets().addAll(DetachableTabPane.this.getScene().getStylesheets());
 			setScene(scene);
 
-//			if (TiwulFXUtil.isMac()) {
-//				com.sun.glass.ui.Robot robot
-//						  = com.sun.glass.ui.Application.GetApplication().createRobot();
-//
-//				setX(robot.getMouseX() - (STAGE_WIDTH / 2));
-//				setY(robot.getMouseY());
-//			} else {
-				final Point p = MouseInfo.getPointerInfo().getLocation();
-				setX(p.x - (STAGE_WIDTH >> 1));
-				setY(p.y);
-//			}
+			final Point p = MouseInfo.getPointerInfo().getLocation();
+			setX( p.x - (STAGE_WIDTH >> 1) );
+			setY( p.y );
 			show();
 			tabPane.getTabs().add(tab);
 			tabPane.getSelectionModel().select(tab);
@@ -706,14 +714,14 @@ public class DetachableTabPane extends TabPane {
 	public String getUserAgentStylesheet() {
 		return DetachableTabPane.class.getResource("tiwulfx-dock.css").toExternalForm();
 	}
-	
+
 	/**
 	 * Use this method to create custom drop hint by extending {@link TabDropHint} class.
 	 */
 	public void setDropHint(TabDropHint dropHint) {
 		this.dropHint = dropHint;
 	}
-	
+
 	public TabDropHint getDropHint() {
 		return this.dropHint;
 	}
