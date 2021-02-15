@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -15,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.skin.TabPaneSkin;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -117,7 +117,7 @@ public class DetachableTabPane extends TabPane {
 	 * @return The tab instance that was created.
 	 */
 	public DetachableTab addTab( final String tabName, final Node content ) {
-		final var tab = new DetachableTab( tabName, content );
+		final DetachableTab tab = new DetachableTab( tabName, content );
 		getTabs().add( tab );
 		return tab;
 	}
@@ -154,12 +154,10 @@ public class DetachableTabPane extends TabPane {
 				}
 				event.consume();
 			} else if (event.getEventType() == DragEvent.DRAG_EXITED) {
-				if (DetachableTabPane.this.getSkin() instanceof TabPaneSkin) {
-					TabPaneSkin sp = (TabPaneSkin) getSkin();
-					sp.getChildren().remove(dropHint.getPath());
-					sp.getChildren().remove(dockPosIndicator);
-					DetachableTabPane.this.requestLayout();
-				}
+				ObservableList<Node> children = DetachableTabPane.this.getChildren();
+				children.remove(dropHint.getPath());
+				children.remove(dockPosIndicator);
+				DetachableTabPane.this.requestLayout();
 			} else if (event.getEventType() == DragEvent.DRAG_ENTERED) {
 				if (!DetachableTabPane.this.scope.get().equals(DRAG_SOURCE.getScope())) {
 					return;
@@ -172,15 +170,13 @@ public class DetachableTabPane extends TabPane {
 				double layoutY = DetachableTabPane.this.getHeight() / 2;
 				dockPosIndicator.setLayoutX(layoutX);
 				dockPosIndicator.setLayoutY(layoutY);
-				if (DetachableTabPane.this.getSkin() instanceof TabPaneSkin) {
-					TabPaneSkin sp = (TabPaneSkin) getSkin();
-					if (!sp.getChildren().contains(dropHint.getPath())) {
-						if (!getTabs().isEmpty()) {
-							sp.getChildren().add(dockPosIndicator);
-						}
-						repaintPath(event);
-						sp.getChildren().add(dropHint.getPath());
+				ObservableList<Node> children = DetachableTabPane.this.getChildren();
+				if (!children.contains(dropHint.getPath())) {
+					if (!getTabs().isEmpty()) {
+						children.add(dockPosIndicator);
 					}
+					repaintPath(event);
+					children.add(dropHint.getPath());
 				}
 			} else if (event.getEventType() == DragEvent.DRAG_DROPPED) {
 				if (pos != null) {
