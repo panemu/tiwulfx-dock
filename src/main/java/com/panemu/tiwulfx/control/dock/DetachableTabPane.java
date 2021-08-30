@@ -237,9 +237,9 @@ public class DetachableTabPane extends TabPane {
 
 					if (DRAG_SOURCE == null) {
 						//it means we are not dragging
-						if (getScene() != null && getScene().getWindow() instanceof TabStage) {
-							TabStage stage = (TabStage) getScene().getWindow();
-							closeStageIfNeeded(stage);
+						if (getScene() != null && getScene().getWindow() instanceof TabStageAccessor) {
+							TabStageAccessor stageAccessor = (TabStageAccessor) getScene().getWindow();
+							closeStageIfNeeded(stageAccessor.getStage());
 						}
 
 						if (getTabs().isEmpty()) {
@@ -475,9 +475,9 @@ public class DetachableTabPane extends TabPane {
 				Tab tab = DRAGGED_TAB;
 				new TabStage(tab);
 			}
-			if (DRAG_SOURCE.getScene() != null && DRAG_SOURCE.getScene().getWindow() instanceof TabStage) {
-				TabStage stage = (TabStage) DRAG_SOURCE.getScene().getWindow();
-				closeStageIfNeeded(stage);
+			if (DRAG_SOURCE.getScene() != null && DRAG_SOURCE.getScene().getWindow() instanceof TabStageAccessor) {
+				TabStageAccessor stageAccessor = (TabStageAccessor) DRAG_SOURCE.getScene().getWindow();
+				closeStageIfNeeded(stageAccessor.getStage());
 			}
 
 			if (DRAG_SOURCE.getTabs().isEmpty()) {
@@ -490,7 +490,7 @@ public class DetachableTabPane extends TabPane {
 
 	}
 
-	private void closeStageIfNeeded(TabStage stage) {
+	private void closeStageIfNeeded(Stage stage) {
 		final Set<Node> setNode = stage.getScene().getRoot().lookupAll(".tab-pane");
 		boolean empty = true;
 		for (final Node nodeTabpane : setNode) {
@@ -683,7 +683,7 @@ public class DetachableTabPane extends TabPane {
 		return DetachableTabPane.this.getScene().getWindow();
 	};
 
-	private class TabStage extends Stage {
+	private class TabStage extends Stage implements TabStageAccessor {
 
 		public TabStage(final Tab tab) {
 			final DetachableTabPane tabPane = detachableTabPaneFactory.create(
@@ -703,6 +703,11 @@ public class DetachableTabPane extends TabPane {
 			if (tab.getContent() instanceof Parent) {
 				((Parent) tab.getContent()).requestLayout();
 			}
+		}
+
+		@Override
+		public Stage getStage() {
+			return this;
 		}
 	}
 
