@@ -41,6 +41,7 @@ public class DetachableTabPane extends TabPane {
 	 */
 	private static DetachableTabPane DRAG_SOURCE;
 	private static Tab DRAGGED_TAB;
+	private static String agentStyleSheet;
 	private final StringProperty scope = new SimpleStringProperty("");
 	private TabDropHint dropHint = new TabDropHint();
 	private Pos pos;
@@ -708,7 +709,10 @@ public class DetachableTabPane extends TabPane {
 
 	@Override
 	public String getUserAgentStylesheet() {
-		return DetachableTabPane.class.getResource("tiwulfx-dock.css").toExternalForm();
+		if (agentStyleSheet == null) {
+			agentStyleSheet = DetachableTabPane.class.getResource("tiwulfx-dock.css").toExternalForm();
+		}
+		return agentStyleSheet;
 	}
 
 	/**
