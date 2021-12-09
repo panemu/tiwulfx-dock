@@ -2,7 +2,8 @@ package com.panemu.tiwulfx.control.dock;
 
 /**
  * Factory responsible to Instantiate new DetachableTabPane when a Tab is
- * detached/docked. Extend this class then implement {@link #init(DetachableTabPane)} method.
+ * detached/docked. Extend this class then implement
+ * {@link #init(DetachableTabPane)} method.
  *
  * @author amrullah
  */

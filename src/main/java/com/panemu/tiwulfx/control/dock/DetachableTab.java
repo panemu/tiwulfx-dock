@@ -21,16 +21,16 @@ public class DetachableTab extends Tab {
 	public DetachableTab(String text, Node content) {
 		super(text, content);
 	}
-	
+
+	public BooleanProperty detachableProperty() {
+		return detachable;
+	}
+
 	public boolean isDetachable() {
 		return detachable.get();
 	}
 
 	public void setDetachable(boolean detachable) {
 		this.detachable.set(detachable);
-	}
-
-	public BooleanProperty detachableProperty() {
-		return detachable;
 	}
 }
