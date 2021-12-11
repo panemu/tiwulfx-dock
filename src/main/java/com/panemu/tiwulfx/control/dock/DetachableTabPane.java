@@ -474,7 +474,7 @@ public class DetachableTabPane extends TabPane {
 		node.setOnDragDone((DragEvent event) -> {
 			if (DRAGGED_TAB != null && DRAGGED_TAB.getTabPane() == null) {
 				Tab tab = DRAGGED_TAB;
-				new TabStage(tab);
+				stageFactory.createStage(DetachableTabPane.this, tab);
 			}
 			if (DRAG_SOURCE.getScene() != null && DRAG_SOURCE.getScene().getWindow() instanceof TabStageAccessor) {
 				TabStageAccessor stageAccessor = (TabStageAccessor) DRAG_SOURCE.getScene().getWindow();
@@ -603,6 +603,14 @@ public class DetachableTabPane extends TabPane {
 	}
 
 	/**
+	 * Set factory to generate new Stage's when Tab's are dropped outside their
+	 * current parent window. Default TabStageFactory creates {@link TabStage}.
+	 */
+	public void setStageFactory(TabStageFactory stageFactory) {
+		this.stageFactory = stageFactory;
+	}
+
+	/**
 	 * Set factory to generate the Scene. Default SceneFactory is provided and it
 	 * will generate a scene with TabPane as root node. Call this method if you
 	 * need to have a custom scene
@@ -612,7 +620,14 @@ public class DetachableTabPane extends TabPane {
 	}
 
 	/**
-	 * Getter for {@link #setSceneFactory(javafx.util.Callback)}
+	 * Getter for {@link #setStageFactory(TabStageFactory)}
+	 */
+	public TabStageFactory getStageFactory() {
+		return stageFactory;
+	}
+
+	/**
+	 * Getter for {@link #setSceneFactory(Callback)}
 	 */
 	public Callback<DetachableTabPane, Scene> getSceneFactory() {
 		return this.sceneFactory;
@@ -651,6 +666,8 @@ public class DetachableTabPane extends TabPane {
 
 	private static final int STAGE_WIDTH = 400;
 
+	private TabStageFactory stageFactory = TabStage::new;
+
 	private Callback<DetachableTabPane, Scene> sceneFactory = p ->
 			new Scene(p, STAGE_WIDTH, STAGE_WIDTH);
 
@@ -684,15 +701,15 @@ public class DetachableTabPane extends TabPane {
 		return DetachableTabPane.this.getScene().getWindow();
 	};
 
-	private class TabStage extends Stage implements TabStageAccessor {
+	public static class TabStage extends Stage implements TabStageAccessor {
+		public TabStage(final  DetachableTabPane prior, final Tab tab) {
+			// Create a new DetachableTabPane with information based on the tab pane the tab
+			// was previously associated with.
+			final DetachableTabPane tabPane = prior.detachableTabPaneFactory.create( prior);
+			initOwner(tabPane.getStageOwnerFactory().call(this));
+			Scene scene = tabPane.getSceneFactory().call(tabPane);
 
-		public TabStage(final Tab tab) {
-			final DetachableTabPane tabPane = detachableTabPaneFactory.create(
-					DetachableTabPane.this );
-			initOwner(stageOwnerFactory.call(this));
-			Scene scene = sceneFactory.call(tabPane);
-
-			scene.getStylesheets().addAll(DetachableTabPane.this.getScene().getStylesheets());
+			scene.getStylesheets().addAll(prior.getScene().getStylesheets());
 			setScene(scene);
 
 			final Point p = MouseInfo.getPointerInfo().getLocation();
