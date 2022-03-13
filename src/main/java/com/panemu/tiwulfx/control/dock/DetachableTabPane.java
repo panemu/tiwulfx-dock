@@ -16,7 +16,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.*;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -25,8 +29,13 @@ import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.function.Consumer;
 
 /**
@@ -529,7 +538,31 @@ public class DetachableTabPane extends TabPane {
 		}
 	}
 
+	private Consumer<DetachableTabPane> onRemove;
+
+	/**
+	 * @return Action to run when a tab pane is removed from its parent, either from an
+	 * independent stage, or from a split-pane section.
+	 */
+	public Consumer<DetachableTabPane> getOnRemove() {
+		return onRemove;
+	}
+
+	/**
+	 * @param onRemove
+	 * 		Action to run when a tab pane is removed from its parent, either from an
+	 * 		independent stage, or from a split-pane section.
+	 */
+	public void setOnRemove(Consumer<DetachableTabPane> onRemove) {
+		this.onRemove = onRemove;
+	}
+
 	private void removeFromParent(DetachableTabPane tabPaneToRemove) {
+		// remove callback will always be called since the intent is to notify that a removal was requested,
+		// not necessarily if the scene graphed changed as a result of that request.
+		if (onRemove != null) {
+			onRemove.accept(tabPaneToRemove);
+		}
 		final SplitPane sp = findParentSplitPane(tabPaneToRemove);
 		if (sp == null) {
 			return;
