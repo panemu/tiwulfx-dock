@@ -306,7 +306,7 @@ public class DetachableTabPane extends TabPane {
 				pane.getChildren().remove(DetachableTabPane.this);
 				pane.getChildren().add(index, targetSplitPane);
 				targetSplitPane.getItems().add(DetachableTabPane.this);
-				DetachableTabPane dt = detachableTabPaneFactory.create(this);
+				DetachableTabPane dt = detachableTabPaneFactory.createAndInit(this);
 				dt.getTabs().add(selectedtab);
 				targetSplitPane.getItems().add(requestedIndex, dt);
 			}
@@ -316,7 +316,7 @@ public class DetachableTabPane extends TabPane {
 				targetSplitPane.setOrientation(requestedOrientation);
 			}
 			if (targetSplitPane.getOrientation() == requestedOrientation) {
-				DetachableTabPane dt = detachableTabPaneFactory.create(this);
+				DetachableTabPane dt = detachableTabPaneFactory.createAndInit(this);
 				dt.getTabs().add(selectedtab);
 				targetSplitPane.getItems().add(requestedIndex, dt);
 				int itemCount = targetSplitPane.getItems().size();
@@ -333,7 +333,7 @@ public class DetachableTabPane extends TabPane {
 				targetSplitPane.getItems().add(indexTabPane, innerSplitpane);
 				innerSplitpane.setOrientation(requestedOrientation);
 				innerSplitpane.getItems().add(DetachableTabPane.this);
-				DetachableTabPane dt = detachableTabPaneFactory.create(this);
+				DetachableTabPane dt = detachableTabPaneFactory.createAndInit(this);
 				dt.getTabs().add(selectedtab);
 				innerSplitpane.getItems().add(requestedIndex, dt);
 			}
@@ -705,7 +705,7 @@ public class DetachableTabPane extends TabPane {
 		public TabStage(final  DetachableTabPane prior, final Tab tab) {
 			// Create a new DetachableTabPane with information based on the tab pane the tab
 			// was previously associated with.
-			final DetachableTabPane tabPane = prior.detachableTabPaneFactory.create( prior);
+			final DetachableTabPane tabPane = prior.detachableTabPaneFactory.createAndInit( prior);
 			initOwner(tabPane.getStageOwnerFactory().call(this));
 			Scene scene = tabPane.getSceneFactory().call(tabPane);
 
