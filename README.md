@@ -5,7 +5,7 @@ TiwulFX-Dock provides enhanced JavaFX TabPane that supports tab reordering, deta
 
 ## Usage
 
-Check latest release version in [maven repo](https://mvnrepository.com/artifact/com.panemu/tiwulfx-dock). Maven dependency:
+Check latest release version in [maven repo](https://repo1.maven.org/maven2/com/panemu/tiwulfx-dock/). Maven dependency:
 ```
 <dependency>
    <groupId>com.panemu</groupId>
