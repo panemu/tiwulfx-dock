@@ -577,8 +577,9 @@ public class DetachableTabPane extends TabPane {
 				siblingProvider.accept(sibling);
 				sibling.setOnClosedPassSibling(siblingProvider);
 			}
+		} else {
+			sp.getItems().remove(tabPaneToRemove);
 		}
-		sp.getItems().remove(tabPaneToRemove);
 		simplifySplitPane(sp);
 	}
 
