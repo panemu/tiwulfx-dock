@@ -252,7 +252,7 @@ public class DetachableTabPane extends TabPane {
 							closeStageIfNeeded(stageAccessor.getStage());
 						}
 
-						if (getTabs().isEmpty()) {
+						if (getTabs().isEmpty() && isCloseIfEmpty()) {
 							removeFromParent(DetachableTabPane.this);
 						}
 					}
