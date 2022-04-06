@@ -252,7 +252,7 @@ public class DetachableTabPane extends TabPane {
 							closeStageIfNeeded(stageAccessor.getStage());
 						}
 
-						if (getTabs().isEmpty()) {
+						if (getTabs().isEmpty() && isCloseIfEmpty()) {
 							removeFromParent(DetachableTabPane.this);
 						}
 					}
@@ -577,8 +577,9 @@ public class DetachableTabPane extends TabPane {
 				siblingProvider.accept(sibling);
 				sibling.setOnClosedPassSibling(siblingProvider);
 			}
+		} else {
+			sp.getItems().remove(tabPaneToRemove);
 		}
-		sp.getItems().remove(tabPaneToRemove);
 		simplifySplitPane(sp);
 	}
 
