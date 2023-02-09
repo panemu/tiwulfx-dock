@@ -187,11 +187,8 @@ public class DetachableTabPane extends TabPane {
 				if ( DRAG_SOURCE != DetachableTabPane.this ) {
 					final Tab selectedtab = DRAGGED_TAB;
 					DetachableTabPane.this.getTabs().add(dropIndex, selectedtab);
-					// Both are UI threads, there is no need to call Platform.runLater;
-					// If we need to wait for a period of time to execute, then we can use Pause Transition
-					//Platform.runLater(
-					//		() -> DetachableTabPane.this.getSelectionModel().select(selectedtab)
-					//);
+					//Using a PauseTransition (As opposed to a new thread or timer) creates a delayed action to run on the UI thread.
+					//Here, we want to call select(selectedtab) on the UI thread after a delay.
 					PauseTransition pt = new PauseTransition(Duration.millis(ANIMATION_SPEED));
 					pt.setOnFinished(animationEvent -> DetachableTabPane.this.getSelectionModel().select(selectedtab));
 					pt.play();
@@ -204,11 +201,7 @@ public class DetachableTabPane extends TabPane {
 						return;
 					}
 					getTabs().add(dropIndex, selectedtab);
-					// Both are UI threads, there is no need to call Platform.runLater;
-					// If we need to wait for a period of time to execute, then we can use Pause Transition
-					//Platform.runLater(
-					//		() -> DetachableTabPane.this.getSelectionModel().select(selectedtab)
-					//);
+					//The reason for using PauseTransition here is the same as above
 					PauseTransition pt = new PauseTransition(Duration.millis(ANIMATION_SPEED));
 					pt.setOnFinished(animationEvent -> DetachableTabPane.this.getSelectionModel().select(selectedtab));
 					pt.play();
@@ -349,17 +342,8 @@ public class DetachableTabPane extends TabPane {
 	}
 
 	private void futureCalculateTabPoints() {
-		// Timer is a non-UI thread, although the calculate Tab Points method does not modify the UI,
-		// But it seems that it will be better to execute it in PauseTransition
-		//final Timer timer = new Timer();
-		//timer.schedule(new TimerTask() {
-		//	@Override
-		//	public void run() {
-		//		calculateTabPoints();
-		//		timer.cancel();
-		//		timer.purge();
-		//	}
-		//}, 1000);
+		//Using a PauseTransition (As opposed to a new thread or timer) creates a delayed action to run on the UI thread.
+		// Here, we want to call calculateTabPoints() on the UI thread after a delay.
 		PauseTransition pt = new PauseTransition(Duration.millis(1000));
 		pt.setOnFinished(event -> calculateTabPoints());
 		pt.play();
@@ -373,15 +357,8 @@ public class DetachableTabPane extends TabPane {
 		final Node tabheader = getTabHeaderArea();
 		if (tabheader == null) {
 			if (retryOnFailed) {
-				//final Timer timer = new Timer();
-				//timer.schedule(new TimerTask() {
-				//	@Override
-				//	public void run() {
-				//		initiateDragGesture(false);
-				//		timer.cancel();
-				//		timer.purge();
-				//	}
-				//}, 500);
+				//Using a PauseTransition (As opposed to a new thread or timer) creates a delayed action to run on the UI thread.
+				//Here, we want to call initiateDragGesture() on the UI thread after a delay.
 				PauseTransition pt = new PauseTransition(Duration.millis(500));
 				pt.setOnFinished(event -> initiateDragGesture(false));
 				pt.play();
