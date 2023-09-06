@@ -1,4 +1,7 @@
 # TiwulFX Dock
+
+[![JFXCentral](https://img.shields.io/badge/Find_me_on-JFXCentral-blue?logo=googlechrome&logoColor=white)](https://www.jfx-central.com/libraries/tiwulfxdock)
+
 TiwulFX-Dock provides enhanced JavaFX TabPane that supports tab reordering, detaching and docking.
 
 ![Demo](media/tiwulfx-dock-demo.gif)
