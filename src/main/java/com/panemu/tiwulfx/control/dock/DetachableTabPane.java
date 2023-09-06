@@ -1,41 +1,26 @@
 package com.panemu.tiwulfx.control.dock;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Bounds;
-import javafx.geometry.Orientation;
-import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.stage.WindowEvent;
+import javafx.stage.*;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -57,6 +42,10 @@ public class DetachableTabPane extends TabPane {
 	private int dropIndex;
 	private final List<Double> lstTabPoint = new ArrayList<>();
 	private boolean closeIfEmpty;
+	/**
+	 * Tab ANIMATION_SPEED=150 millis + wait 50~100 millis
+	 */
+	private static final double ANIMATION_SPEED = 230;
 
 	public DetachableTabPane() {
 		getStyleClass().add("detachable-tab-pane");
@@ -198,9 +187,11 @@ public class DetachableTabPane extends TabPane {
 				if ( DRAG_SOURCE != DetachableTabPane.this ) {
 					final Tab selectedtab = DRAGGED_TAB;
 					DetachableTabPane.this.getTabs().add(dropIndex, selectedtab);
-					Platform.runLater(
-							() -> DetachableTabPane.this.getSelectionModel().select(selectedtab)
-					);
+					//Using a PauseTransition (As opposed to a new thread or timer) creates a delayed action to run on the UI thread.
+					//Here, we want to call select(selectedtab) on the UI thread after a delay.
+					PauseTransition pt = new PauseTransition(Duration.millis(ANIMATION_SPEED));
+					pt.setOnFinished(animationEvent -> DetachableTabPane.this.getSelectionModel().select(selectedtab));
+					pt.play();
 					event.setDropCompleted(true);
 				} else {
 					event.setDropCompleted(true);
@@ -210,9 +201,10 @@ public class DetachableTabPane extends TabPane {
 						return;
 					}
 					getTabs().add(dropIndex, selectedtab);
-					Platform.runLater(
-							() -> DetachableTabPane.this.getSelectionModel().select(selectedtab)
-					);
+					//The reason for using PauseTransition here is the same as above
+					PauseTransition pt = new PauseTransition(Duration.millis(ANIMATION_SPEED));
+					pt.setOnFinished(animationEvent -> DetachableTabPane.this.getSelectionModel().select(selectedtab));
+					pt.play();
 				}
 				if (event.isDropCompleted()) {
 					event.getDragboard().setContent(null);
@@ -350,15 +342,11 @@ public class DetachableTabPane extends TabPane {
 	}
 
 	private void futureCalculateTabPoints() {
-		final Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				calculateTabPoints();
-				timer.cancel();
-				timer.purge();
-			}
-		}, 1000);
+		//Using a PauseTransition (As opposed to a new thread or timer) creates a delayed action to run on the UI thread.
+		// Here, we want to call calculateTabPoints() on the UI thread after a delay.
+		PauseTransition pt = new PauseTransition(Duration.millis(1000));
+		pt.setOnFinished(event -> calculateTabPoints());
+		pt.play();
 	}
 
 	/**
@@ -369,16 +357,11 @@ public class DetachableTabPane extends TabPane {
 		final Node tabheader = getTabHeaderArea();
 		if (tabheader == null) {
 			if (retryOnFailed) {
-				final Timer timer = new Timer();
-				timer.schedule(new TimerTask() {
-					@Override
-					public void run() {
-						initiateDragGesture(false);
-						timer.cancel();
-						timer.purge();
-					}
-				}, 500);
-
+				//Using a PauseTransition (As opposed to a new thread or timer) creates a delayed action to run on the UI thread.
+				//Here, we want to call initiateDragGesture() on the UI thread after a delay.
+				PauseTransition pt = new PauseTransition(Duration.millis(500));
+				pt.setOnFinished(event -> initiateDragGesture(false));
+				pt.play();
 			}
 			return;
 		}
