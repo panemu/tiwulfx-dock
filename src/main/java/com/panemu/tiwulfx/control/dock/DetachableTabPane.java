@@ -153,10 +153,18 @@ public class DetachableTabPane extends TabPane {
 				}
 				event.consume();
 			} else if (event.getEventType() == DragEvent.DRAG_EXITED) {
-				ObservableList<Node> children = DetachableTabPane.this.getChildren();
-				children.remove(dropHint.getPath());
-				children.remove(dockPosIndicator);
-				DetachableTabPane.this.requestLayout();
+            /**
+             * Github Issue: #19
+             * DatePicker (and combobox with editable is true) interferes with drag event. It somehow triggers
+             * DRAG_ENTERED and DRAG_EXITED. To detect that a DRAG_EXITED event is actually exiting TabPane, 
+             * not just exiting DatePicker, here we calculate the mouse position in relative to TabPane
+             */
+            if (event.isDropCompleted() || !isDragEventInsideNode(DetachableTabPane.this, event)) {
+               ObservableList<Node> children = DetachableTabPane.this.getChildren();
+               children.remove(dropHint.getPath());
+               children.remove(dockPosIndicator);
+               DetachableTabPane.this.requestLayout();
+            }
 			} else if (event.getEventType() == DragEvent.DRAG_ENTERED) {
 				if (!DetachableTabPane.this.scope.get().equals(DRAG_SOURCE.getScope())) {
 					return;
@@ -397,19 +405,27 @@ public class DetachableTabPane extends TabPane {
 		}
 	}
 
+   private boolean isDragEventInsideNode(Node node, DragEvent event) {
+      Point2D point = node.screenToLocal(event.getScreenX(), event.getScreenY());
+      if (point == null) {
+         return false;
+      }
+      return node.contains(point);
+   }
+   
 	private void repaintPath(DragEvent event) {
 		boolean hasTab = !getTabs().isEmpty();
-		if (hasTab && btnLeft.contains(btnLeft.screenToLocal(event.getScreenX(), event.getScreenY()))) {
+		if (hasTab && isDragEventInsideNode(btnLeft, event)) {
 			dropHint.refresh(0, 0, DetachableTabPane.this.getWidth() / 2, DetachableTabPane.this.getHeight());
 			pos = Pos.CENTER_LEFT;
-		} else if (hasTab && btnRight.contains(btnRight.screenToLocal(event.getScreenX(), event.getScreenY()))) {
+		} else if (hasTab && isDragEventInsideNode(btnRight, event)) {
 			double pathWidth = DetachableTabPane.this.getWidth() / 2;
 			dropHint.refresh(pathWidth, 0, pathWidth, DetachableTabPane.this.getHeight());
 			pos = Pos.CENTER_RIGHT;
-		} else if (hasTab && btnTop.contains(btnTop.screenToLocal(event.getScreenX(), event.getScreenY()))) {
+		} else if (hasTab && isDragEventInsideNode(btnTop, event)) {
 			dropHint.refresh(0, 0, getWidth(), getHeight() / 2);
 			pos = Pos.TOP_CENTER;
-		} else if (hasTab && btnBottom.contains(btnBottom.screenToLocal(event.getScreenX(), event.getScreenY()))) {
+		} else if (hasTab && isDragEventInsideNode(btnBottom, event)) {
 			double pathHeight = getHeight() / 2;
 			dropHint.refresh(0, pathHeight, getWidth(), getHeight() - pathHeight);
 			pos = Pos.BOTTOM_CENTER;
