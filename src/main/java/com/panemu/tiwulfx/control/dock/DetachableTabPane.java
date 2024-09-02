@@ -639,7 +639,7 @@ public class DetachableTabPane extends TabPane {
 	 * Set factory to generate new Stage's when Tab's are dropped outside their
 	 * current parent window. Default TabStageFactory creates {@link TabStage}.
 	 */
-	public void setStageFactory(TabStageFactory stageFactory) {
+	public void setStageFactory(TabStageFactory<?> stageFactory) {
 		this.stageFactory = stageFactory;
 	}
 
@@ -655,7 +655,7 @@ public class DetachableTabPane extends TabPane {
 	/**
 	 * Getter for {@link #setStageFactory(TabStageFactory)}
 	 */
-	public TabStageFactory getStageFactory() {
+	public TabStageFactory<?> getStageFactory() {
 		return stageFactory;
 	}
 
@@ -697,9 +697,9 @@ public class DetachableTabPane extends TabPane {
 		this.closeIfEmpty = closeIfEmpty;
 	}
 
-	private static final int STAGE_WIDTH = 400;
+	static final int STAGE_WIDTH = 400;
 
-	private TabStageFactory stageFactory = TabStage::new;
+	private TabStageFactory<?> stageFactory = TabStage::new;
 
 	private Callback<DetachableTabPane, Scene> sceneFactory = p ->
 			new Scene(p, STAGE_WIDTH, STAGE_WIDTH);
