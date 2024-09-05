@@ -432,6 +432,8 @@ public class DetachableTabPane extends TabPane {
 		} else {
 			pos = null;
 			double tabpos = -1;
+			double tabAreaPos = getTabHeaderArea().getLayoutBounds().getMaxY();
+
 			for (int i = 1; i < lstTabPoint.size(); i++) {
 				if (event.getX() < lstTabPoint.get(i)) {
 					tabpos = lstTabPoint.get(i - 1);
@@ -446,7 +448,7 @@ public class DetachableTabPane extends TabPane {
 					tabpos = lstTabPoint.get(index);
 				}
 			}
-			dropHint.refresh(tabpos, DetachableTabPane.this.getWidth(), DetachableTabPane.this.getHeight());
+			dropHint.refreshInsertion(tabpos, tabAreaPos, DetachableTabPane.this.getWidth(), DetachableTabPane.this.getHeight());
 		}
 	}
 

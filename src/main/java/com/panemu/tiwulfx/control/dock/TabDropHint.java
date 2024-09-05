@@ -11,6 +11,7 @@ import javafx.scene.shape.*;
 public class TabDropHint {
 
 	private double tabPos;
+	private double tabAreaPos;
 	private double width;
 	private double height;
 	private double startX;
@@ -38,11 +39,12 @@ public class TabDropHint {
 		}
 	}
 	
-	void refresh(double tabPos, double width, double height) {
+	void refreshInsertion(double tabPos, double tabAreaPos, double width, double height) {
 		boolean regenerate  = this.tabPos != tabPos
 				  || this.width != width
 				  || this.height != height;
 		this.tabPos = tabPos;
+		this.tabAreaPos = tabAreaPos;
 		this.width = width;
 		this.height = height;
 		startX = 0;
@@ -51,7 +53,18 @@ public class TabDropHint {
 			generateInsertionPath(path, tabPos, width - 2, height - 2);
 		}
 	}
-	
+
+	/**
+	 * Returns the maximum Y-coordinate of the tab area.
+	 * <p>
+	 * The tab area refers to the node containing all the tabs.
+	 *
+	 * @return The maximum Y-coordinate of the tab area.
+	 */
+	protected double getTabAreaPos() {
+		return tabAreaPos;
+	}
+
 	protected void generateAdjacentPath(Path path, double startX, double startY, double width, double height) {
 		path.getElements().clear();
 		MoveTo moveTo = new MoveTo();
@@ -65,7 +78,7 @@ public class TabDropHint {
 	}
 
 	protected void generateInsertionPath(Path path, double tabPos, double width, double height) {
-		int tabHeight = 28;
+		double tabHeight = getTabAreaPos();
 		int start = 2;
 		tabPos = Math.max(start, tabPos);
 		path.getElements().clear();
