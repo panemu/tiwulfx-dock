@@ -33,7 +33,7 @@ public class CustomDropHint extends TabDropHint {
 
 	@Override
 	protected void generateInsertionPath(Path path, double tabPos, double width, double height) {
-		int tabHeight = 28;
+		double tabHeight = getTabAreaPos();
 		int start = 2;
 		dropGuide.getChildren().clear();
 		dropGuide.setLayoutX(start);
