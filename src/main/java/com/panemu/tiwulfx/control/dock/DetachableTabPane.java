@@ -159,12 +159,14 @@ public class DetachableTabPane extends TabPane {
              * DRAG_ENTERED and DRAG_EXITED. To detect that a DRAG_EXITED event is actually exiting TabPane, 
              * not just exiting DatePicker, here we calculate the mouse position in relative to TabPane
              */
-            if (event.isDropCompleted() || !isDragEventInsideNode(DetachableTabPane.this, event)) {
-               ObservableList<Node> children = DetachableTabPane.this.getChildren();
-               children.remove(dropHint.getPath());
-               children.remove(dockPosIndicator);
-               DetachableTabPane.this.requestLayout();
-            }
+				if (event.isDropCompleted() || !isDragEventInsideNode(DetachableTabPane.this, event)) {
+					Platform.runLater(() -> {
+						ObservableList<Node> children = DetachableTabPane.this.getChildren();
+						children.remove(dropHint.getPath());
+						children.remove(dockPosIndicator);
+						DetachableTabPane.this.requestLayout();
+					});
+				}
 			} else if (event.getEventType() == DragEvent.DRAG_ENTERED) {
 				if (!DetachableTabPane.this.scope.get().equals(DRAG_SOURCE.getScope())) {
 					return;
