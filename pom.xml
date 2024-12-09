@@ -4,7 +4,7 @@
     <groupId>com.panemu</groupId>
     <artifactId>tiwulfx-dock</artifactId>
 	 <name>tiwulfx-dock</name>
-    <version>0.4</version>
+    <version>0.5</version>
     <packaging>jar</packaging>
 	 <description>TiwulFX-Dock provides enhanced JavaFX TabPane that supports tab reordering, detaching and docking.</description>
 	 <url>https://github.com/panemu/tiwulfx-dock</url>
